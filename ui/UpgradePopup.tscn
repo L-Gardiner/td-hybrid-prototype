@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/UpgradePopup.gd" id=1]
+
+[node name="UpgradePopup" type="Control"]
+script = ExtResource( 1 )
+visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+
+[node name="OptionAButton" type="Button" parent="VBoxContainer"]
+text = "Upgrade A"
+
+[node name="OptionBButton" type="Button" parent="VBoxContainer"]
+text = "Upgrade B"
+
+[node name="DeleteButton" type="Button" parent="VBoxContainer"]
+text = "Delete Tower"

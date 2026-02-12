@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TowerDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://towers/TowerDef.gd" id=1]
+
+[resource]
+script = ExtResource( 1 )
+id = "splash_power"
+display_name = "Heavy Splash"
+cost = 9
+damage = 2.3
+range = 110.0
+shots_per_second = 0.8
+cooldown_sec = 1.25
+projectile_speed = 320.0
+splash_radius = 48.0
+splash_multiplier = 0.85
+targeting_policy = 0
+upgrade_cost_a = 0
+upgrade_cost_b = 0

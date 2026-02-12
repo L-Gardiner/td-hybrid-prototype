@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/HUD.gd" id=1]
+
+[node name="HUD" type="Control"]
+script = ExtResource( 1 )
+
+[node name="GoldLabel" type="Label" parent="."]
+position = Vector2(16, 16)
+text = "Gold: 0"
+
+[node name="BaseHpLabel" type="Label" parent="."]
+position = Vector2(16, 40)
+text = "Base HP: 0"
+
+[node name="WaveLabel" type="Label" parent="."]
+position = Vector2(16, 64)
+text = "Wave 0/0"
+
+[node name="StartWaveButton" type="Button" parent="."]
+position = Vector2(16, 96)
+text = "Start Wave"
+
+[node name="SimStatusLabel" type="Label" parent="."]
+position = Vector2(16, 120)
+text = "1x"
+
+[node name="SimControlsLabel" type="Label" parent="."]
+position = Vector2(16, 144)
+text = "Keys: P Pause  |  T Speed"
+
+[node name="NextWavePanel" type="PanelContainer" parent="."]
+position = Vector2(16, 176)
+size = Vector2(220, 110)
+
+[node name="NextWaveVBox" type="VBoxContainer" parent="NextWavePanel"]
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 214.0
+offset_bottom = 104.0
+theme_override_constants/separation = 2
+
+[node name="NextWaveTitle" type="Label" parent="NextWavePanel/NextWaveVBox"]
+text = "Next Wave"
+
+[node name="NextWaveNumber" type="Label" parent="NextWavePanel/NextWaveVBox"]
+text = "Wave 0/0"
+
+[node name="NextWaveStatus" type="Label" parent="NextWavePanel/NextWaveVBox"]
+text = ""
+
+[node name="NextWaveEntries" type="Label" parent="NextWavePanel/NextWaveVBox"]
+text = ""

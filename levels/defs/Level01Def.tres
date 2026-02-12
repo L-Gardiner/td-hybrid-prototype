@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="LevelDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://levels/defs/LevelDef.gd" id=1]
+
+[resource]
+script = ExtResource( 1 )
+starting_gold = 10
+base_hp = 10
+waves = [ {
+"spawn_interval": 0.8,
+"composition": [ {
+"type": "runner",
+"count": 4
+}, {
+"type": "tank",
+"count": 2
+} ]
+}, {
+"count": 8,
+"spawn_interval": 0.75,
+"weights": {
+"runner": 0.7,
+"tank": 0.3
+}
+}, {
+"count": 6,
+"spawn_interval": 0.7,
+"weights": {
+"runner": 0.7,
+"tank": 0.3
+}
+} ]

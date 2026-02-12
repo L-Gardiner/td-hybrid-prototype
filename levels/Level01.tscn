@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://levels/Level.gd" id=1]
+[ext_resource type="PackedScene" path="res://levels/build_spot/BuildSpot.tscn" id=2]
+[ext_resource type="Script" path="res://levels/EnemySpawner.gd" id=3]
+[ext_resource type="PackedScene" path="res://enemies/Enemy.tscn" id=4]
+[ext_resource type="PackedScene" path="res://towers/Tower.tscn" id=5]
+[ext_resource type="Script" path="res://levels/BaseMarker.gd" id=6]
+[ext_resource type="Script" path="res://levels/PathVisualizer.gd" id=7]
+[ext_resource type="Resource" path="res://levels/defs/Level01Def.tres" id=8]
+
+[node name="Level01" type="Node2D"]
+script = ExtResource( 1 )
+level_def = ExtResource( 8 )
+enemy_scene = ExtResource( 4 )
+tower_scene = ExtResource( 5 )
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="EnemyPath" type="Path2D" parent="World"]
+
+[node name="Followers" type="Node2D" parent="World/EnemyPath"]
+
+[node name="PathVisualizer" type="Node2D" parent="World/EnemyPath"]
+script = ExtResource( 7 )
+
+[node name="Line2D" type="Line2D" parent="World/EnemyPath/PathVisualizer"]
+
+[node name="Base" type="Node2D" parent="World"]
+script = ExtResource( 6 )
+position = Vector2(1040, 360)
+
+[node name="BuildSpots" type="Node2D" parent="World"]
+
+[node name="BuildSpot1" parent="World/BuildSpots" instance=ExtResource( 2 )]
+position = Vector2(354.286, 280)
+
+[node name="BuildSpot2" parent="World/BuildSpots" instance=ExtResource( 2 )]
+position = Vector2(468.571, 440)
+
+[node name="BuildSpot3" parent="World/BuildSpots" instance=ExtResource( 2 )]
+position = Vector2(582.857, 280)
+
+[node name="BuildSpot4" parent="World/BuildSpots" instance=ExtResource( 2 )]
+position = Vector2(697.143, 440)
+
+[node name="BuildSpot5" parent="World/BuildSpots" instance=ExtResource( 2 )]
+position = Vector2(811.429, 280)
+
+[node name="BuildSpot6" parent="World/BuildSpots" instance=ExtResource( 2 )]
+position = Vector2(925.714, 440)
+
+[node name="EnemySpawner" type="Node" parent="."]
+script = ExtResource( 3 )
+

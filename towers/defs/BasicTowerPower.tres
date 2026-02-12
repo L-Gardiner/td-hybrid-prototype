@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TowerDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://towers/TowerDef.gd" id=1]
+
+[resource]
+script = ExtResource( 1 )
+id = "basic_power"
+display_name = "Heavy Basic"
+cost = 7
+damage = 3.2
+range = 130.0
+shots_per_second = 0.85
+cooldown_sec = 1.2
+projectile_speed = 620.0
+splash_radius = 0.0
+splash_multiplier = 0.0
+targeting_policy = 0
+upgrade_cost_a = 0
+upgrade_cost_b = 0

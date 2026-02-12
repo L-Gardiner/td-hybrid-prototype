@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://enemies/EnemyDef.gd" id=1]
+
+[resource]
+script = ExtResource( 1 )
+id = "tank"
+max_hp = 12.0
+speed = 55.0
+leak_damage = 2
+reward_gold = 3
+color = Color(1.0, 0.6, 0.4, 1.0)
+flat_damage_reduction = 2

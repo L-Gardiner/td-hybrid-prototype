@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://qvnrbasjfbbd"]
+
+[ext_resource type="Script" uid="uid://dx380amj1ando" path="res://main/Main.gd" id="1"]
+[ext_resource type="PackedScene" path="res://levels/Level01.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://ui/HUD.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://ui/UpgradePopup.tscn" id="3_9m5sd"]
+[ext_resource type="PackedScene" path="res://ui/BuildPopup.tscn" id="4"]
+[ext_resource type="Script" uid="uid://bc3k7s8tya12j" path="res://ui/WinLoseOverlay.gd" id="5"]
+[ext_resource type="Script" uid="uid://ilrlvmiq5msd" path="res://audio/AudioManager.gd" id="6"]
+[ext_resource type="Script" uid="uid://ddrxxxeub88k4" path="res://main/SimController.gd" id="7"]
+
+[node name="Main" type="Node" unique_id=1478919516]
+script = ExtResource("1")
+level_scene = ExtResource("2")
+
+[node name="AudioManager" type="Node" parent="." unique_id=953524356]
+script = ExtResource("6")
+
+[node name="SimController" type="Node" parent="." unique_id=480567673]
+script = ExtResource("7")
+
+[node name="LevelRoot" type="Node" parent="." unique_id=1773001152]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=2008606546]
+
+[node name="HUD" parent="UI" unique_id=276722996 instance=ExtResource("3")]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="UpgradePopup" parent="UI" unique_id=2940962860 instance=ExtResource("3_9m5sd")]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="BuildPopup" parent="UI" unique_id=1079145294 instance=ExtResource("4")]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="WinLoseOverlay" type="Control" parent="UI" unique_id=1694815967]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("5")
+
+[node name="MessageLabel" type="Label" parent="UI/WinLoseOverlay" unique_id=498027682]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -60.0
+offset_right = 200.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 48
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RestartButton" type="Button" parent="UI/WinLoseOverlay" unique_id=917781171]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = 30.0
+offset_right = 70.0
+offset_bottom = 66.0
+text = "Restart (R)"

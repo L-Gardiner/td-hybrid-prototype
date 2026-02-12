@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="TowerDef" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://towers/TowerDef.gd" id=1]
+[ext_resource type="Resource" path="res://towers/defs/BasicTowerRapid.tres" id=2]
+[ext_resource type="Resource" path="res://towers/defs/BasicTowerPower.tres" id=3]
+
+[resource]
+script = ExtResource( 1 )
+id = "basic"
+display_name = "Basic"
+cost = 3
+damage = 2.0
+range = 120.0
+shots_per_second = 1.0
+cooldown_sec = 1.0
+projectile_speed = 640.0
+splash_radius = 0.0
+splash_multiplier = 0.0
+targeting_policy = 0
+upgrade_option_a = ExtResource( 2 )
+upgrade_option_b = ExtResource( 3 )
+upgrade_cost_a = 4
+upgrade_cost_b = 5
