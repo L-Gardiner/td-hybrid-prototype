@@ -181,39 +181,10 @@ func _on_start_wave_pressed() -> void:
 	_update_start_wave_state()
 
 func _on_build_popup_tower_selected(tower_id: String) -> void:
-	if game_over:
-		return
-	if selected_build_spot == null or selected_build_spot.occupied:
-		return
-	var tower_def: TowerDef = _get_tower_def(tower_id)
-	if tower_def == null:
-		return
-	if gold < tower_def.cost:
-		return
-	if level == null:
-		return
-	var tower_scene: PackedScene = level.tower_scene
-	if tower_scene == null:
-		push_warning("Main: tower_scene not set.")
-		return
-	var tower: Tower = tower_scene.instantiate() as Tower
-	if tower == null:
-		return
-	tower.tower_def = tower_def
-	level.add_child(tower)
-	tower.global_position = selected_build_spot.global_position
-	tower.build_spot = selected_build_spot
-	selected_build_spot.occupied = true
-	_set_gold(gold - tower_def.cost)
-	var audio_manager: AudioManager = get_tree().get_first_node_in_group("audio_manager") as AudioManager
-	if audio_manager != null:
-		audio_manager.play_tower_place()
-	_update_hud()
-	_update_start_wave_state()
-	if build_popup:
-		build_popup.close()
-	selected_build_spot = null
-	tower_built.emit(tower)
+	if _try_build_tower_at_spot(tower_id, selected_build_spot):
+		if build_popup:
+			build_popup.close()
+		selected_build_spot = null
 
 func _refresh_build_popup() -> void:
 	if build_popup and build_popup.visible and selected_build_spot != null:
@@ -223,6 +194,42 @@ func _on_build_popup_close_requested() -> void:
 	if build_popup:
 		build_popup.close()
 	selected_build_spot = null
+
+func try_build_tower(tower_id: String, build_spot: BuildSpot) -> bool:
+	return _try_build_tower_at_spot(tower_id, build_spot)
+
+func _try_build_tower_at_spot(tower_id: String, build_spot: BuildSpot) -> bool:
+	if game_over:
+		return false
+	if build_spot == null or build_spot.occupied:
+		return false
+	var tower_def: TowerDef = _get_tower_def(tower_id)
+	if tower_def == null:
+		return false
+	if gold < tower_def.cost:
+		return false
+	if level == null:
+		return false
+	var tower_scene: PackedScene = level.tower_scene
+	if tower_scene == null:
+		push_warning("Main: tower_scene not set.")
+		return false
+	var tower: Tower = tower_scene.instantiate() as Tower
+	if tower == null:
+		return false
+	tower.tower_def = tower_def
+	level.add_child(tower)
+	tower.global_position = build_spot.global_position
+	tower.build_spot = build_spot
+	build_spot.occupied = true
+	_set_gold(gold - tower_def.cost)
+	var audio_manager: AudioManager = get_tree().get_first_node_in_group("audio_manager") as AudioManager
+	if audio_manager != null:
+		audio_manager.play_tower_place()
+	_update_hud()
+	_update_start_wave_state()
+	tower_built.emit(tower)
+	return true
 
 func _on_enemy_spawned(enemy: Enemy) -> void:
 	if enemy == null:
@@ -278,6 +285,8 @@ func _check_wave_completion() -> void:
 
 func _show_win() -> void:
 	game_over = true
+	_cancel_wave_spawning()
+	_pause_game_on_end()
 	_update_start_wave_state()
 	if build_popup:
 		build_popup.close()
@@ -288,6 +297,8 @@ func _show_win() -> void:
 
 func _show_lose() -> void:
 	game_over = true
+	_cancel_wave_spawning()
+	_pause_game_on_end()
 	_update_start_wave_state()
 	if build_popup:
 		build_popup.close()
@@ -345,6 +356,16 @@ func add_gold(amount: int) -> void:
 	if amount <= 0:
 		return
 	_set_gold(gold + amount)
+
+func _pause_game_on_end() -> void:
+	get_tree().paused = true
+	Engine.time_scale = 0.0
+
+func _cancel_wave_spawning() -> void:
+	if spawner == null:
+		return
+	if spawner.has_method("cancel_wave"):
+		spawner.cancel_wave()
 
 func _emit_wave_state_if_changed() -> void:
 	var in_progress: bool = _is_wave_in_progress()

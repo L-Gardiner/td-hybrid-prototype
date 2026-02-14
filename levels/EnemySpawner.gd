@@ -8,6 +8,7 @@ const RUNNER_DEF_PATH: String = "res://enemies/defs/RunnerEnemy.tres"
 const TANK_DEF_PATH: String = "res://enemies/defs/TankEnemy.tres"
 
 var is_spawning: bool = false
+var cancel_requested: bool = false
 
 var enemy_scene: PackedScene
 var enemy_path: Path2D
@@ -26,7 +27,13 @@ func start_wave(wave_def: Variant) -> void:
     if is_spawning:
         return
     is_spawning = true
+    cancel_requested = false
     _spawn_wave(wave_def)
+
+func cancel_wave() -> void:
+    if not is_spawning:
+        return
+    cancel_requested = true
 
 func _spawn_wave(wave_def: Variant) -> void:
     var interval: float = _get_wave_interval(wave_def)
@@ -35,16 +42,23 @@ func _spawn_wave(wave_def: Variant) -> void:
         var data: Dictionary = _resolve_wave_data(wave_def)
         var count: int = data.count
         for i in range(count):
+            if cancel_requested:
+                break
             _spawn_enemy("")
             if i < count - 1:
                 await get_tree().create_timer(interval, false).timeout
     else:
         var total: int = spawn_queue.size()
         for i in range(total):
+            if cancel_requested:
+                break
             _spawn_enemy(spawn_queue[i])
             if i < total - 1:
                 await get_tree().create_timer(interval, false).timeout
     is_spawning = false
+    if cancel_requested:
+        cancel_requested = false
+        return
     wave_spawn_finished.emit()
 
 func _resolve_wave_data(wave_def: Variant) -> Dictionary:

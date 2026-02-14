@@ -15,10 +15,12 @@ var level: Level
 var spawner: EnemySpawner
 var session: GameSession
 var selected_tower: Tower
+var menu_build_spot: BuildSpot
 
 const DELETE_REFUND_RATIO: float = 0.5
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_ensure_session()
 	_connect_ui()
 	_spawn_level()
@@ -29,6 +31,11 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_R:
 		_on_restart_pressed()
+		return
+	if event is InputEventKey and event.pressed:
+		var key_event: InputEventKey = event
+		if _handle_build_menu_hotkeys(key_event):
+			return
 
 func _spawn_level() -> void:
 	if level_scene == null:
@@ -51,6 +58,7 @@ func _connect_ui() -> void:
 	if build_popup != null and session != null:
 		build_popup.tower_selected.connect(session._on_build_popup_tower_selected)
 		build_popup.request_close.connect(session._on_build_popup_close_requested)
+		build_popup.request_close.connect(_on_build_popup_close_requested)
 	if upgrade_popup != null:
 		upgrade_popup.upgrade_selected.connect(_on_upgrade_selected)
 		upgrade_popup.delete_selected.connect(_on_delete_selected)
@@ -93,8 +101,35 @@ func _connect_level(level_instance: Level) -> void:
 func _on_build_spot_clicked(build_spot: BuildSpot) -> void:
 	if session == null:
 		return
+	_close_all_menus()
 	_clear_selected_tower()
+	menu_build_spot = build_spot
 	session.handle_build_spot_clicked(build_spot)
+
+func _on_player_request_build_menu(build_spot: BuildSpot) -> void:
+	if build_spot == null:
+		_close_all_menus()
+		return
+	if menu_build_spot == build_spot and (build_popup != null and build_popup.visible or upgrade_popup != null and upgrade_popup.visible):
+		_close_all_menus()
+		return
+	_close_all_menus()
+	menu_build_spot = build_spot
+	if build_spot.occupied:
+		var tower: Tower = _find_tower_for_spot(build_spot)
+		if tower != null:
+			_on_tower_clicked(tower)
+		return
+	_clear_selected_tower()
+	if session != null:
+		session.handle_build_spot_clicked(build_spot)
+
+func _on_player_build_spot_out_of_range(build_spot: BuildSpot) -> void:
+	if build_spot == null:
+		return
+	if menu_build_spot != build_spot:
+		return
+	_close_all_menus()
 
 func _on_restart_pressed() -> void:
 	get_tree().reload_current_scene()
@@ -111,6 +146,11 @@ func _setup_session() -> void:
 	if level == null:
 		return
 	session.setup(level, spawner, hud, build_popup, win_lose_overlay)
+	var player: Player = get_tree().get_first_node_in_group("player") as Player
+	if player != null:
+		player.session = session
+		player.request_build_menu.connect(_on_player_request_build_menu)
+		player.build_spot_out_of_range.connect(_on_player_build_spot_out_of_range)
 
 func _on_tower_built(tower: Tower) -> void:
 	if tower == null:
@@ -192,16 +232,64 @@ func _on_delete_selected() -> void:
 
 func _on_upgrade_popup_close_requested() -> void:
 	_close_upgrade_popup()
+	menu_build_spot = null
 
 func _close_upgrade_popup() -> void:
 	if upgrade_popup:
 		upgrade_popup.close()
 	_clear_selected_tower()
+	menu_build_spot = null
 
 func _clear_selected_tower() -> void:
 	if selected_tower != null:
 		selected_tower.set_selected(false)
 	selected_tower = null
+
+func _close_all_menus() -> void:
+	if build_popup != null and build_popup.visible and session != null:
+		session._on_build_popup_close_requested()
+	if upgrade_popup != null and upgrade_popup.visible:
+		_close_upgrade_popup()
+	menu_build_spot = null
+
+func _on_build_popup_close_requested() -> void:
+	menu_build_spot = null
+
+func _find_tower_for_spot(build_spot: BuildSpot) -> Tower:
+	if build_spot == null or level == null:
+		return null
+	for child in level.get_children():
+		var tower: Tower = child as Tower
+		if tower != null and tower.build_spot == build_spot:
+			return tower
+	return null
+
+func _handle_build_menu_hotkeys(key_event: InputEventKey) -> bool:
+	if key_event.echo:
+		return false
+	var is_basic: bool = key_event.keycode == KEY_1
+	var is_splash: bool = key_event.keycode == KEY_2
+	var is_delete: bool = key_event.keycode == KEY_3
+	if not (is_basic or is_splash or is_delete):
+		return false
+	if upgrade_popup != null and upgrade_popup.visible:
+		if is_basic:
+			_on_upgrade_selected(0)
+			return true
+		if is_splash:
+			_on_upgrade_selected(1)
+			return true
+		if is_delete:
+			_on_delete_selected()
+			return true
+	if build_popup != null and build_popup.visible:
+		if is_basic and session != null:
+			session._on_build_popup_tower_selected("basic")
+			return true
+		if is_splash and session != null:
+			session._on_build_popup_tower_selected("splash")
+			return true
+	return false
 
 func _on_wave_state_changed(in_progress: bool) -> void:
 	if upgrade_popup != null and upgrade_popup.visible and selected_tower != null:
